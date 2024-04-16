@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Row, Col, Pagination, Form, FormControl, FormSelect } from "react-bootstrap";
+import {
+  Table,
+  Button,
+  Row,
+  Col,
+  Pagination,
+  Form,
+  FormControl,
+  FormSelect,
+} from "react-bootstrap";
 import { getAllMapels, deleteMapel } from "./api_mapel";
 import Swal from "sweetalert2";
 
@@ -83,7 +92,10 @@ const Mapel = () => {
       mapel.jamPelajaran.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const currentMapels = filteredMapels.slice(indexOfFirstMapel, indexOfLastMapel);
+  const currentMapels = filteredMapels.slice(
+    indexOfFirstMapel,
+    indexOfLastMapel
+  );
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -120,10 +132,15 @@ const Mapel = () => {
           </Form>
         </Col>
       </Row>
-      <div style={{ maxHeight: "325px", overflowY: "scroll" }}>
+      <div
+        style={{
+          maxHeight: filteredMapels.length > 5 ? "320px" : "auto",
+          overflowY: filteredMapels.length > 5 ? "scroll" : "auto",
+        }}
+      >
         <Table striped bordered hover responsive>
           <thead>
-            <tr>
+            <tr className="text-center">
               <th>No.</th>
               <th>Nama Mapel</th>
               <th>Deskripsi</th>
@@ -144,10 +161,10 @@ const Mapel = () => {
                 <td>{mapel.tingkat}</td>
                 <td>{mapel.semester}</td>
                 <td>{mapel.jamPelajaran}</td>
-                <td className="d-flex">
+                <td style={{ justifyContent: "center" }} className="d-flex">
                   <a
                     href={`/edit_mapel/${mapel.id}`}
-                    className="btn btn-primary me-2"
+                    className="btn btn-primary me-3"
                   >
                     Edit
                   </a>

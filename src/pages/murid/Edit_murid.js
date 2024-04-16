@@ -3,6 +3,7 @@ import { Form, Button, Row, Col } from "react-bootstrap";
 import Swal from "sweetalert2";
 import { getMuridById, updateMurid } from "./api_murid";
 import { useHistory, useParams } from "react-router-dom";
+import axios from "axios";
 
 const formatDateToID = (dateString) => {
   const date = new Date(dateString);
@@ -23,22 +24,40 @@ const EditMurid = () => {
     lahir: "",
     umur: "",
     alamat: "",
+    kelasId: "",
   });
+  const [kelasJurusan, setKelasJurusan] = useState([]);
+  const [selectedKelasJurusan, setSelectedKelasJurusan] = useState("");
 
   useEffect(() => {
     const fetchMuridData = async () => {
       try {
         const muridData = await getMuridById(id);
-        // Ubah format tanggal lahir ke tanggal/bulan/tahun
         const [year, month, day] = muridData.lahir.split("-");
         const formattedBirthDate = `${day}-${month}-${year}`;
         setMurid({ ...muridData, lahir: formattedBirthDate });
+        setSelectedKelasJurusan(muridData.kelasId);
       } catch (error) {
         console.error("Failed to fetch murid data: ", error);
       }
     };
     fetchMuridData();
   }, [id]);
+
+  const fetchKelasJurusan = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/tugas_akhir/api/kelas/all"
+      );
+      setKelasJurusan(response.data);
+    } catch (error) {
+      console.error("Failed to fetch Kelas and Jurusan: ", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchKelasJurusan();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -70,7 +89,7 @@ const EditMurid = () => {
       }));
     }
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const initialMuridData = await getMuridById(id);
@@ -83,7 +102,8 @@ const EditMurid = () => {
       initialMuridData.nisn !== murid.nisn ||
       initialFormattedBirthDate !== userFormattedBirthDate ||
       initialMuridData.umur !== murid.umur ||
-      initialMuridData.alamat !== murid.alamat;
+      initialMuridData.alamat !== murid.alamat ||
+      initialMuridData.kelasId !== selectedKelasJurusan;
 
     if (!isDataChanged) {
       Swal.fire({
@@ -106,6 +126,7 @@ const EditMurid = () => {
         ...murid,
         lahir: userFormattedBirthDate,
         umur: updatedUmur,
+        kelasId: selectedKelasJurusan,
       });
       Swal.fire({
         icon: "success",
@@ -178,8 +199,8 @@ const EditMurid = () => {
                 <Form.Group className="mb-3" controlId="umur">
                   <Form.Label>Umur</Form.Label>
                   <Form.Control
-                    type="text" // Ubah tipe input umur menjadi number
-                    placeholder="Masukkan umur murid"
+                    type="text"
+                    placeholder="Umur"
                     name="umur"
                     value={murid.umur}
                     onChange={handleChange}
@@ -217,6 +238,27 @@ const EditMurid = () => {
                     autoComplete="off"
                     required
                   />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Form.Group className="mb-3" controlId="kelasJurusan">
+                  <Form.Label>Kelas dan Jurusan</Form.Label>
+                  <Form.Control
+                    as="select"
+                    name="kelasId"
+                    value={selectedKelasJurusan}
+                    onChange={(e) => setSelectedKelasJurusan(e.target.value)}
+                    required
+                  >
+                    <option value="">Pilih Kelas dan Jurusan</option>
+                    {kelasJurusan.map((kelas) => (
+                      <option key={kelas.id} value={kelas.id}>
+                        {`${kelas.kelas} - ${kelas.jurusan}`}
+                      </option>
+                    ))}
+                  </Form.Control>
                 </Form.Group>
               </Col>
             </Row>

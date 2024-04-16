@@ -21,22 +21,26 @@ const AddMapel = () => {
   const [customSemester, setCustomSemester] = useState("");
   const [customJamPelajaran, setCustomJamPelajaran] = useState("");
   const [customKurikulum, setCustomKurikulum] = useState("");
+  
   const [tingkatOptions, setTingkatOptions] = useState([
     { value: "SD", label: "SD" },
     { value: "SMP", label: "SMP" },
     { value: "SMA", label: "SMA" },
     { value: "SMK", label: "SMK" },
   ]);
+  
   const [semesterOptions, setSemesterOptions] = useState([
     { value: "Ganjil", label: "Ganjil" },
     { value: "Genap", label: "Genap" },
   ]);
+  
   const [jamPelajaranOptions, setJamPelajaranOptions] = useState([
     { value: "pagi", label: "Pagi" },
     { value: "siang", label: "Siang" },
     { value: "sore", label: "Sore" },
     { value: "malam", label: "Malam" },
   ]);
+  
   const [kurikulumOptions, setKurikulumOptions] = useState([
     { value: "Kurikulum KTSP 2006", label: "Kurikulum KTSP 2006" },
     { value: "Kurikulum K-13", label: "Kurikulum K-13" },

@@ -1,10 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Row, Col, Pagination, Form, FormControl, FormSelect } from "react-bootstrap";
+import {
+  Table,
+  Button,
+  Row,
+  Col,
+  Pagination,
+  Form,
+  FormControl,
+  FormSelect,
+} from "react-bootstrap";
 import { getAllGurus, deleteGuru } from "./api_guru";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 const Guru = () => {
   const [gurus, setGurus] = useState([]);
+  const [mapels, setMapels] = useState([]);
+  const [kelas, setKelas] = useState([]);
+  const [jurusan, setJurusan] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [gurusPerPage, setGurusPerPage] = useState(10);
@@ -12,14 +25,55 @@ const Guru = () => {
   useEffect(() => {
     const fetchGurus = async () => {
       try {
-        let data = await getAllGurus();
-        data = data.sort((a, b) => b.id - a.id);
+        const data = await getAllGurus();
         setGurus(data);
       } catch (error) {
         console.error("Failed to fetch Gurus: ", error);
       }
     };
     fetchGurus();
+  }, []);
+
+  useEffect(() => {
+    const fetchMapels = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/tugas_akhir/api/mapel/all"
+        );
+        setMapels(response.data);
+      } catch (error) {
+        console.error("Failed to fetch Mapels: ", error);
+      }
+    };
+    fetchMapels();
+  }, []);
+
+  useEffect(() => {
+    const fetchKelas = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/tugas_akhir/api/kelas/all"
+        );
+        setKelas(response.data);
+      } catch (error) {
+        console.error("Failed to fetch Kelas and Jurusan: ", error);
+      }
+    };
+    fetchKelas();
+  }, []);
+
+  useEffect(() => {
+    const fetchjurusan = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/tugas_akhir/api/kelas/all"
+        );
+        setJurusan(response.data);
+      } catch (error) {
+        console.error("Failed to fetch Kelas and Jurusan: ", error);
+      }
+    };
+    fetchjurusan();
   }, []);
 
   const handleDeleteGuru = async (id) => {
@@ -77,13 +131,29 @@ const Guru = () => {
   const indexOfFirstGuru = indexOfLastGuru - gurusPerPage;
   const filteredGurus = gurus.filter((guru) => {
     const telfonString = guru.telfon && guru.telfon.toString();
+    const kelasNama =
+      guru.walikelasId && kelas.find((k) => k.id === guru.walikelasId)?.nama;
+    const jurusanNama =
+      guru.walikelasId &&
+      jurusan.find((j) => j.id === guru.walikelasId)?.jurusan;
     return (
-      (guru.nama && guru.nama.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (guru.mapel && guru.mapel.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (guru.alamat && guru.alamat.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (telfonString && telfonString.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
-    });
+      (guru.nama &&
+        guru.nama.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (guru.mapelId &&
+        mapels
+          .find((mapel) => mapel.id === guru.mapelId)
+          ?.nama.toLowerCase()
+          .includes(searchTerm.toLowerCase())) ||
+      (guru.alamat &&
+        guru.alamat.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (telfonString &&
+        telfonString.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (kelasNama &&
+        kelasNama.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (jurusanNama &&
+        jurusanNama.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+  });
 
   const currentGurus = filteredGurus.slice(indexOfFirstGuru, indexOfLastGuru);
 
@@ -123,15 +193,21 @@ const Guru = () => {
           </Form>
         </Col>
       </Row>
-      <div style={{ maxHeight: "325px", overflowY: "scroll" }}>
+      <div
+        style={{
+          maxHeight: filteredGurus.length > 5 ? "320px" : "auto",
+          overflowY: filteredGurus.length > 5 ? "scroll" : "auto",
+        }}
+      >
         <Table striped bordered hover responsive>
           <thead>
-            <tr>
+            <tr className="text-center">
               <th>No.</th>
               <th>Nama</th>
-              <th>Mapel</th>
-              <th>Alamat</th>
+              <th>Guru Mapel</th>
               <th>No. Telfon</th>
+              <th>Alamat</th>
+              <th>Walikelas</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -140,13 +216,25 @@ const Guru = () => {
               <tr key={guru.id}>
                 <td>{indexOfFirstGuru + index + 1 + "."}</td>
                 <td>{guru.nama}</td>
-                <td>{guru.mapel}</td>
-                <td>{guru.alamat}</td>
+                <td>
+                  {mapels.find((mapel) => mapel.id === guru.mapelId)?.nama}
+                </td>
                 <td>{guru.telfon}</td>
-                <td className="d-flex">
+                <td>{guru.alamat}</td>
+                <td>
+                  {guru.walikelasId &&
+                    `${
+                      kelas.find((kelas) => kelas.id === guru.walikelasId)
+                        ?.kelas
+                    } ${
+                      jurusan.find((kelas) => kelas.id === guru.walikelasId)
+                        ?.jurusan
+                    }`}
+                </td>
+                <td style={{ justifyContent: "center" }} className="d-flex">
                   <a
                     href={`/edit_guru/${guru.id}`}
-                    className="btn btn-primary text-decoration-none me-2"
+                    className="btn btn-primary text-decoration-none me-3"
                   >
                     Edit
                   </a>
@@ -161,7 +249,7 @@ const Guru = () => {
             ))}
             {currentGurus.length === 0 && (
               <tr>
-                <td colSpan="6" className="text-center">
+                <td colSpan="7" className="text-center">
                   Tidak ada data guru yang ditemukan.
                 </td>
               </tr>

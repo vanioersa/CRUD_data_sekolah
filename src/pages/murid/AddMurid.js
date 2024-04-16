@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect  } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import Swal from "sweetalert2";
 import { createMurid } from "./api_murid";
 import { useHistory } from "react-router-dom";
+import axios from "axios";
 
 const AddMurid = () => {
   const [murid, setMurid] = useState({
@@ -13,7 +14,24 @@ const AddMurid = () => {
     umur: "",
     alamat: "",
   });
+  const [kelasJurusan, setKelasJurusan] = useState([]);
+  const [selectedKelasJurusan, setSelectedKelasJurusan] = useState("");
   const history = useHistory();
+
+  const fetchKelasJurusan = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/tugas_akhir/api/kelas/all"
+      );
+      setKelasJurusan(response.data);
+    } catch (error) {
+      console.error("Failed to fetch Kelas and Jurusan: ", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchKelasJurusan();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -56,7 +74,7 @@ const AddMurid = () => {
         (birthDate.getMonth() + 1)
       ).slice(-2)}-${birthDate.getFullYear()}`;
 
-      await createMurid({ ...murid, lahir: formattedBirthDate, umur: murid.umur + " Tahun" });
+      await createMurid({ ...murid, lahir: formattedBirthDate, umur: murid.umur + " Tahun", kelasId: selectedKelasJurusan });
       Swal.fire({
         icon: "success",
         title: "Berhasil",
@@ -185,6 +203,28 @@ const AddMurid = () => {
                     autoComplete="off"
                     required
                   />
+                </Form.Group>
+              </Col>
+            </Row>
+
+            <Row>
+              <Col>
+                <Form.Group className="mb-3" controlId="walikelas">
+                  <Form.Label>Walikelas</Form.Label>
+                  <Form.Control
+                    as="select"
+                    name="walikelas"
+                    value={selectedKelasJurusan}
+                    onChange={(e) => setSelectedKelasJurusan(e.target.value)}
+                    required
+                  >
+                    <option value="">Pilih Kelas dan Jurusan</option>
+                    {kelasJurusan.map((kelas) => (
+                      <option key={kelas.id} value={kelas.id}>
+                        {`${kelas.kelas} - ${kelas.jurusan}`}
+                      </option>
+                    ))}
+                  </Form.Control>
                 </Form.Group>
               </Col>
             </Row>

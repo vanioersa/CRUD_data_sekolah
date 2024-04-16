@@ -1,17 +1,48 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import { createGuru } from "./api_guru";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 const AddGuru = () => {
   const [formData, setFormData] = useState({
     nama: "",
-    mapel: "",
     telfon: "",
     alamat: "",
   });
+  const [mapels, setMapels] = useState([]);
+  const [kelasJurusan, setKelasJurusan] = useState([]);
+  const [selectedMapel, setSelectedMapel] = useState("");
+  const [selectedKelasJurusan, setSelectedKelasJurusan] = useState("");
   const history = useHistory();
+
+  const fetchMapels = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/tugas_akhir/api/mapel/all"
+      );
+      setMapels(response.data);
+    } catch (error) {
+      console.error("Failed to fetch Mapels: ", error);
+    }
+  };
+
+  const fetchKelasJurusan = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/tugas_akhir/api/kelas/all"
+      );
+      setKelasJurusan(response.data);
+    } catch (error) {
+      console.error("Failed to fetch Kelas and Jurusan: ", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchMapels();
+    fetchKelasJurusan();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -19,8 +50,15 @@ const AddGuru = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const guruData = {
+      nama: formData.nama,
+      mapelId: selectedMapel,
+      telfon: formData.telfon,
+      alamat: formData.alamat,
+      walikelasId: selectedKelasJurusan,
+    };
     try {
-      await createGuru(formData);
+      await createGuru(guruData);
       Swal.fire({
         icon: "success",
         title: "Berhasil",
@@ -32,7 +70,6 @@ const AddGuru = () => {
       });
       setFormData({
         nama: "",
-        mapel: "",
         telfon: "",
         alamat: "",
       });
@@ -69,16 +106,21 @@ const AddGuru = () => {
               </Col>
               <Col>
                 <Form.Group className="mb-3" controlId="mapel">
-                  <Form.Label>Mata Pelajaran</Form.Label>
+                  <Form.Label>Guru Mapel</Form.Label>
                   <Form.Control
-                    type="text"
-                    placeholder="Mata Pelajaran"
+                    as="select"
                     name="mapel"
-                    value={formData.mapel}
-                    onChange={handleChange}
-                    autoComplete="off"
+                    value={selectedMapel}
+                    onChange={(e) => setSelectedMapel(e.target.value)}
                     required
-                  />
+                  >
+                    <option value="">Pilih Mata Pelajaran</option>
+                    {mapels.map((mapel) => (
+                      <option key={mapel.id} value={mapel.id}>
+                        {mapel.nama}
+                      </option>
+                    ))}
+                  </Form.Control>
                 </Form.Group>
               </Col>
             </Row>
@@ -113,6 +155,29 @@ const AddGuru = () => {
                 </Form.Group>
               </Col>
             </Row>
+
+            <Row>
+              <Col>
+                <Form.Group className="mb-3" controlId="walikelas">
+                  <Form.Label>Walikelas</Form.Label>
+                  <Form.Control
+                    as="select"
+                    name="walikelas"
+                    value={selectedKelasJurusan}
+                    onChange={(e) => setSelectedKelasJurusan(e.target.value)}
+                    required
+                  >
+                    <option value="">Pilih Kelas dan Jurusan</option>
+                    {kelasJurusan.map((kelas) => (
+                      <option key={kelas.id} value={kelas.id}>
+                        {`${kelas.kelas} - ${kelas.jurusan}`}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </Form.Group>
+              </Col>
+            </Row>
+
             <Button variant="primary" type="submit">
               Simpan
             </Button>

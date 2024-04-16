@@ -1,4 +1,3 @@
-// api_guru.js
 import axios from "axios";
 
 const apiUrl = "http://localhost:8080/tugas_akhir/api/guru";
@@ -32,10 +31,10 @@ export const getGuruById = async (id, isPublic = false) => {
   }
 };
 
-export const createGuru = async (GuruData) => {
+export const createGuru = async (guruData) => {
   try {
     const token = localStorage.getItem("token");
-    const response = await axios.post(`${apiUrl}/add`, GuruData, {
+    const response = await axios.post(`${apiUrl}/add`, guruData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -47,10 +46,10 @@ export const createGuru = async (GuruData) => {
   }
 };
 
-export const updateGuru = async (id, GuruData) => {
+export const updateGuru = async (id, guruData) => {
   try {
     const token = localStorage.getItem("token");
-    const response = await axios.put(`${apiUrl}/ubah/${id}`, GuruData, {
+    const response = await axios.put(`${apiUrl}/ubah/${id}`, guruData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

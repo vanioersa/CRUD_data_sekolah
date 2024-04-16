@@ -1,48 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Table, Breadcrumb, Modal, Pagination } from 'react-bootstrap';
-import Swal from 'sweetalert2';
 import { faPlus, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { Button, Table, Breadcrumb, Modal, Pagination } from 'react-bootstrap';
+import Swal from 'sweetalert2';
 
 function Mapel() {
     const [mapel, setMapel] = useState([]);
     const [namaMapel, setNamaMapel] = useState("");
-    const [deskripsi, setDeskripsi] = useState("");
-    const [tingkat, setTingkat] = useState("");
-    const [semester, setSemester] = useState("");
-    const [jamPelajaran, setJamPelajaran] = useState("");
-    const [kurikulum, setKurikulum] = useState("");
-    const [guruId, setGuruId] = useState("");
+    const [guruId, setGuruId] = useState(""); // State untuk menyimpan ID guru terpilih
     const [show, setShow] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(5);
     const [searchTerm, setSearchTerm] = useState("");
-    const [guruOptions, setGuruOptions] = useState([]);
+    const [guruOptions, setGuruOptions] = useState([]); // State untuk menyimpan daftar guru
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
     const getAll = async () => {
         try {
-            const response = await axios.get("http://tugas_akhir/api/mapel/all");
-            const data = response.data.data.map(item => ({
-                ...item,
-                deskripsi: item.deskripsi || "-",
-                tingkat: item.tingkat || "-",
-                semester: item.semester || "-",
-                jamPelajaran: item.jamPelajaran || "-",
-                kurikulum: item.kurikulum || "-"
-            }));
-            setMapel(data);
+            const response = await axios.get(`http://localhost:3034/mapel/all-guru`);
+            setMapel(response.data.data);
         } catch (error) {
             alert("Terjadi Kesalahan" + error);
         }
     };
 
+    // Mengambil daftar guru dari server
     useEffect(() => {
         axios
-            .get("http://localhost:8080/tugas_akhir/api/guru/all")
+            .get(`http://localhost:3034/guru/all-guru`)
             .then((response) => {
                 setGuruOptions(response.data.data);
             })
@@ -58,14 +46,9 @@ function Mapel() {
     const add = async (e) => {
         e.preventDefault();
         try {
-            await axios.post("http://localhost:8080/tugas_akhir/api/mapel/mapel", {
+            await axios.post("http://localhost:3034/mapel", {
                 namaMapel: namaMapel,
-                deskripsi: deskripsi,
-                tingkat: tingkat,
-                semester: semester,
-                jamPelajaran: jamPelajaran,
-                kurikulum: kurikulum,
-                guru: guruId,
+                guru: guruId, // Menggunakan ID guru terpilih
             });
             setShow(false);
             Swal.fire({
@@ -84,7 +67,7 @@ function Mapel() {
 
     const deleteMapel = async (id) => {
         try {
-            await axios.delete("http://localhost:8080/tugas_akhir/api/mapel/by-id/" + id);
+            await axios.delete(`http://localhost:3034/mapel/` + id);
             Swal.fire({
                 icon: "success",
                 title: "Dihapus!",
@@ -99,12 +82,15 @@ function Mapel() {
         }
     };
 
+    // Logic for pagination
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = mapel.slice(indexOfFirstItem, indexOfLastItem);
 
+    // Change page
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+    // Search function
     const search = (rows) => {
         return rows.filter(
             (row) =>
@@ -112,7 +98,6 @@ function Mapel() {
                 row.guru.namaGuru.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1
         );
     };
-
     return (
         <div>
             <div className='container mt-5'>
@@ -132,16 +117,11 @@ function Mapel() {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <Table style={{ border: "2px" }} striped bordered hover responsive>
+                <Table style={{ border: "2px" }} striped bordered hover responsive className='shadow-sm'>
                     <thead>
                         <tr>
                             <th>No</th>
                             <th>Nama Mapel</th>
-                            <th>Deskripsi</th>
-                            <th>Tingkat</th>
-                            <th>Semester</th>
-                            <th>Jam Pelajaran</th>
-                            <th>Kurikulum</th>
                             <th>Guru Pengampu</th>
                             <th>Aksi</th>
                         </tr>
@@ -151,12 +131,7 @@ function Mapel() {
                             return (
                                 <tr key={index}>
                                     <td>{indexOfFirstItem + index + 1}</td>
-                                    <td>{mapel.nama}</td>
-                                    <td>{mapel.deskripsi}</td>
-                                    <td>{mapel.tingkat}</td>
-                                    <td>{mapel.semester}</td>
-                                    <td>{mapel.jamPelajaran}</td>
-                                    <td>{mapel.kurikulum}</td>
+                                    <td>{mapel.namaMapel}</td>
                                     <td>{mapel.guru.namaGuru}</td>
                                     <td>
                                         <Button variant="info" size="xs" className="me-2" href={`/editMapel/${mapel.id}`}>
@@ -180,7 +155,7 @@ function Mapel() {
                     ))}
                     <Pagination.Next onClick={() => paginate(currentPage + 1)} disabled={currentPage === Math.ceil(mapel.length / itemsPerPage)} />
                 </Pagination>
-
+                {/* Modal Tambah Mapel */}
                 <Modal show={show} onHide={handleClose} centered>
                     <Modal.Header closeButton className="text-dark">
                         <Modal.Title className="text-lg font-bold">Tambah Mapel</Modal.Title>
@@ -195,51 +170,6 @@ function Mapel() {
                                     onChange={(e) => setNamaMapel(e.target.value)}
                                     className="input-field"
                                     required
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label style={{ fontFamily: "Verdana" }} className="block text-sm font-medium text-gray-700">Deskripsi:</label>
-                                <input
-                                    placeholder="Deskripsi"
-                                    value={deskripsi}
-                                    onChange={(e) => setDeskripsi(e.target.value)}
-                                    className="input-field"
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label style={{ fontFamily: "Verdana" }} className="block text-sm font-medium text-gray-700">Tingkat:</label>
-                                <input
-                                    placeholder="Tingkat"
-                                    value={tingkat}
-                                    onChange={(e) => setTingkat(e.target.value)}
-                                    className="input-field"
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label style={{ fontFamily: "Verdana" }} className="block text-sm font-medium text-gray-700">Semester:</label>
-                                <input
-                                    placeholder="Semester"
-                                    value={semester}
-                                    onChange={(e) => setSemester(e.target.value)}
-                                    className="input-field"
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label style={{ fontFamily: "Verdana" }} className="block text-sm font-medium text-gray-700">Jam Pelajaran:</label>
-                                <input
-                                    placeholder="Jam Pelajaran"
-                                    value={jamPelajaran}
-                                    onChange={(e) => setJamPelajaran(e.target.value)}
-                                    className="input-field"
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label style={{ fontFamily: "Verdana" }} className="block text-sm font-medium text-gray-700">Kurikulum:</label>
-                                <input
-                                    placeholder="Kurikulum"
-                                    value={kurikulum}
-                                    onChange={(e) => setKurikulum(e.target.value)}
-                                    className="input-field"
                                 />
                             </div>
                             <div className="mb-4">

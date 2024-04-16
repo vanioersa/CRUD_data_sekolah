@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Row, Col, Pagination, Form, FormControl, FormSelect } from "react-bootstrap";
+import {
+  Table,
+  Button,
+  Row,
+  Col,
+  Pagination,
+  Form,
+  FormControl,
+  FormSelect,
+} from "react-bootstrap";
 import { getAllKelas, deleteKelas } from "./api_kelas";
 import Swal from "sweetalert2";
 
@@ -75,10 +84,20 @@ const Kelas = () => {
   const indexOfFirstKelas = indexOfLastKelas - kelasPerPage;
   const filteredKelas = kelas.filter(
     (kelas) =>
-      (kelas.kelas && kelas.kelas.toString().toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (kelas.jurusan && kelas.jurusan.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (kelas.jumlah && kelas.jumlah.toString().toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (kelas.tahunAjaran && kelas.tahunAjaran.toLowerCase().includes(searchTerm.toLowerCase()))
+      (kelas.kelas &&
+        kelas.kelas
+          .toString()
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())) ||
+      (kelas.jurusan &&
+        kelas.jurusan.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (kelas.jumlah &&
+        kelas.jumlah
+          .toString()
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())) ||
+      (kelas.tahunAjaran &&
+        kelas.tahunAjaran.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const currentKelas = filteredKelas.slice(indexOfFirstKelas, indexOfLastKelas);
@@ -118,14 +137,19 @@ const Kelas = () => {
           </Form>
         </Col>
       </Row>
-      <div style={{ maxHeight: "325px", overflowY: "scroll" }}>
+      <div
+        style={{
+          maxHeight: filteredKelas.length > 5 ? "320px" : "auto",
+          overflowY: filteredKelas.length > 5 ? "scroll" : "auto",
+        }}
+      >
         <Table striped bordered hover responsive>
           <thead>
-            <tr>
+            <tr className="text-center">
               <th>No.</th>
               <th>Kelas</th>
-              <th>Jumlah Murid</th>
               <th>Jurusan</th>
+              <th>Jumlah Murid</th>
               <th>Tahun Ajaran</th>
               <th>Action</th>
             </tr>
@@ -135,13 +159,13 @@ const Kelas = () => {
               <tr key={kelas.id}>
                 <td>{indexOfFirstKelas + index + 1 + "."}</td>
                 <td>{kelas.kelas}</td>
-                <td>{kelas.jumlah}</td>
                 <td>{kelas.jurusan}</td>
+                <td>{kelas.jumlah}</td>
                 <td>{kelas.tahunAjaran}</td>
-                <td className="d-flex">
+                <td style={{ justifyContent: "center" }} className="d-flex">
                   <a
                     href={`/edit_kelas/${kelas.id}`}
-                    className="text-decoration-none btn btn-primary me-2"
+                    className="text-decoration-none btn btn-primary me-3"
                   >
                     Edit
                   </a>

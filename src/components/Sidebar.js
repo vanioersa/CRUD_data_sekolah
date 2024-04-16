@@ -75,7 +75,7 @@ function Sidebar_Navbar() {
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         Swal.fire({
           title: "Dibatalkan!",
-          text: "Tidak jadi keluar",
+          text: "Anda membatalkan keluar",
           icon: "error",
           timer: 2000,
           showConfirmButton: false,
@@ -85,146 +85,173 @@ function Sidebar_Navbar() {
   };
 
   return (
-    <div style={{ backgroundColor: isOpen ? "#495E57" : "" }}>
-      {isLoggedIn && (
-        <div id="viewport" className={isOpen ? "open" : ""}>
-          <div id="sidebar">
-            <header
-              style={{ paddingTop: "8px", paddingBottom: "8px" }}
-              className="px-4"
-            >
-              <a
-                className="text-decoration-none d-flex align-items-center"
-                href="/dashboard"
+    <>
+      <div style={{ backgroundColor: isOpen ? "#495E57" : "" }}>
+        {isLoggedIn && (
+          <div id="viewport" className={isOpen ? "open" : ""}>
+            <div id="sidebar">
+              <header
+                style={{ paddingTop: "8px", paddingBottom: "8px" }}
+                className="px-4"
               >
-                <img
-                  src={Logo}
-                  alt="Logo"
-                  width="70px"
-                  height="60px"
-                  className="mr-3"
-                />
-                <p className="m-0" style={{ color: "white", fontSize: "15px" }}>
-                  Data Sekolah
-                </p>
-              </a>
-            </header>
-            <ul className={`nav flex-column ${isOpen ? "activest" : "active"}`}>
-              <>
-                {navItems.map((item) => (
-                  <li
-                    key={item.href}
-                    className={`nav-item ${
-                      isActive(item.href) ? "active" : ""
-                    }`}
+                <a
+                  className="text-decoration-none d-flex align-items-center"
+                  href="/dashboard"
+                >
+                  <img
+                    src={Logo}
+                    alt="Logo"
+                    width="70px"
+                    height="60px"
+                    className="mr-3"
+                  />
+                  <p
+                    className="m-0"
+                    style={{ color: "white", fontSize: "15px" }}
                   >
-                    <a className="nav-link" href={item.href}>
-                      <FontAwesomeIcon icon={item.icon} className="padi" />{" "}
-                      {item.label}
-                    </a>
-                  </li>
-                ))}
-
-                <li className="nav-item">
-                  <Link className="nav-link" onClick={handleLogout}>
-                    <FontAwesomeIcon icon={faSignOutAlt} />
-                    <span
-                      style={{ marginLeft: "15px" }}
-                      className="logout-text"
+                    Data Sekolah
+                  </p>
+                </a>
+              </header>
+              <ul
+                className={`nav flex-column ${isOpen ? "activest" : "active"}`}
+              >
+                <>
+                  {navItems.map((item) => (
+                    <li
+                      key={item.href}
+                      className={`nav-item ${
+                        isActive(item.href) ? "active" : ""
+                      }`}
                     >
-                      Logout
-                    </span>
-                  </Link>
-                </li>
-              </>
-            </ul>
+                      <a className="nav-link" href={item.href}>
+                        <FontAwesomeIcon icon={item.icon} className="padi" />{" "}
+                        {item.label}
+                      </a>
+                    </li>
+                  ))}
+
+                  <li className="nav-item">
+                    <Link className="nav-link" onClick={handleLogout}>
+                      <FontAwesomeIcon icon={faSignOutAlt} />
+                      <span
+                        style={{ marginLeft: "15px" }}
+                        className="logout-text"
+                      >
+                        Keluar
+                      </span>
+                    </Link>
+                  </li>
+                </>
+              </ul>
+            </div>
           </div>
-        </div>
-      )}
-      <div id="content">
-        <nav
-          className="navbar navbar-default"
-          style={{ boxShadow: "0 8px 16px rgba(0,0,0,0.1)", width: "100%" }}
-        >
-          <a
-            href="/dashboard"
-            className={`text-decoration-none logo-navbar d-flex align-items-center${
-              isOpen ? " hidden" : ""
-            }`}
+        )}
+        <div id="content">
+          <nav
+            className="navbar navbar-default"
             style={{
-              textDecoration: "none",
+              boxShadow: "0 8px 16px rgba(0,0,0,0.1)",
+              width: "100%",
+              position: "fixed",
+              zIndex: 999,
+              top: 0,
             }}
           >
-            <img
-              src={Logo}
-              alt="Logo"
-              width="70px"
-              height="60px"
-              className="mr-3"
-            />
-            <p className="m-0" style={{ color: "white", fontSize: "15px" }}>
-              Data Sekolah
-            </p>
-          </a>
+            <a
+              href="/dashboard"
+              className={`text-decoration-none logo-navbar d-flex align-items-center${
+                isOpen ? " hidden" : ""
+              }`}
+              style={{
+                textDecoration: "none",
+              }}
+            >
+              <img
+                src={Logo}
+                alt="Logo"
+                width="70px"
+                height="60px"
+                className="mr-3"
+              />
+              <p className="m-0" style={{ color: "white", fontSize: "15px" }}>
+                Data Sekolah
+              </p>
+            </a>
 
-          <div className="navbar-links">
-            {isLoggedIn && !isOpen && (
-              <>
-                {navItems.map((item) => (
-                  <a key={item.href} className="space" href={item.href}>
-                    <span
-                      className={`nav-items ${
-                        isActive(item.href) ? "actives" : ""
-                      }`}
-                    >
-                      {item.label}
-                    </span>
-                  </a>
-                ))}
-                <Link className="space" onClick={handleLogout} to="#">
-                  <span className="logout-text">Logout</span>
-                </Link>
-              </>
-            )}
-            {!isOpen && !isLoggedIn && (
-              <>
-                {navItems.map((item) => (
-                  <Link key={item.href} className="space" to={item.href}>
-                    <span
-                      className={`nav-items ${
-                        isActive(item.href) ? "actives" : ""
-                      }`}
-                    >
-                      {item.label}
-                    </span>
+            <div className="navbar-links">
+              {isLoggedIn && !isOpen && (
+                <>
+                  {navItems.map((item) => (
+                    <a key={item.href} className="space" href={item.href}>
+                      <span
+                        className={`nav-items ${
+                          isActive(item.href) ? "actives" : ""
+                        }`}
+                      >
+                        {item.label}
+                      </span>
+                    </a>
+                  ))}
+                  <Link className="space" onClick={handleLogout} to="#">
+                    <span className="logout-text">Keluar</span>
                   </Link>
-                ))}
-              </>
+                </>
+              )}
+              {!isOpen && !isLoggedIn && (
+                <>
+                  {navItems.map((item) => (
+                    <Link key={item.href} className="space" to={item.href}>
+                      <span
+                        className={`nav-items ${
+                          isActive(item.href) ? "actives" : ""
+                        }`}
+                      >
+                        {item.label}
+                      </span>
+                    </Link>
+                  ))}
+                </>
+              )}
+            </div>
+            {isLoggedIn ? (
+              <button
+                className="btn-toggle"
+                onClick={toggleSidebar}
+                aria-expanded={isOpen}
+                aria-label="Toggle sidebar"
+              >
+                {isOpen ? "☰" : "≡"}
+              </button>
+            ) : (
+              <button
+                className="btn-toggle"
+                onClick={toggleSidebar}
+                aria-expanded={isOpen}
+                aria-label="Toggle sidebar"
+              >
+                {isOpen ? "" : null}
+              </button>
             )}
-          </div>
-          {isLoggedIn ? (
-            <button
-              className="btn-toggle"
-              onClick={toggleSidebar}
-              aria-expanded={isOpen}
-              aria-label="Toggle sidebar"
-            >
-              {isOpen ? "☰" : "≡"}
-            </button>
-          ) : (
-            <button
-              className="btn-toggle"
-              onClick={toggleSidebar}
-              aria-expanded={isOpen}
-              aria-label="Toggle sidebar"
-            >
-              {isOpen ? "" : null}
-            </button>
-          )}
-        </nav>
-        <div className="container-fluid" />
+          </nav>
+        </div>
       </div>
-    </div>
+      <div className="bottom-margin" />
+
+      <style>
+        {`
+      .bottom-margin {
+  margin-bottom: 7%;
+}
+
+@media (max-width: 767px) {
+  .bottom-margin {
+    margin-bottom: 25%;
+  }
+}
+`}
+      </style>
+    </>
   );
 }
 
