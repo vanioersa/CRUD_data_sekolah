@@ -109,8 +109,27 @@ const Login = () => {
       }}
       className="container"
     >
+      <div className="submit-container">
+        <button
+          className="submit gray"
+          onClick={() => {
+            window.location.reload();
+            // history.goBack();
+          }}
+        >
+          Masuk
+        </button>
+        <button
+          className="submit gray"
+          onClick={() => {
+            window.location.href = "/register";
+          }}
+        >
+          Daftar
+        </button>
+      </div>
       <div className="header">
-        <div className="text">Login</div>
+        <div className="text">Masuk</div>
         <div className="underline"></div>
       </div>
       <div className="inputs">
@@ -152,9 +171,6 @@ const Login = () => {
         <button className="submit gray" onClick={handleLogin}>
           Login
         </button>
-        <a className="text-decoration-none submit gray" href="/register">
-          Daftar Akun
-        </a>
       </div>
     </div>
   );

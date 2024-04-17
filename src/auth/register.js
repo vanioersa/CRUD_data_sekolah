@@ -130,8 +130,26 @@ const Register = () => {
       }}
       className="container"
     >
+      <div className="submit-container">
+        <button
+          className="submit gray"
+          onClick={() => {
+            history.goBack();
+          }}
+        >
+          Masuk
+        </button>
+        <button
+          className="submit gray"
+          onClick={() => {
+            window.location.reload();
+          }}
+        >
+          Daftar
+        </button>
+      </div>
       <div className="header">
-        <div className="text">Registrasi</div>
+        <div className="text">Daftar</div>
         <div className="underline"></div>
       </div>
       <div className="inputs">
@@ -170,12 +188,6 @@ const Register = () => {
       <div className="submit-container">
         <button className="submit gray" onClick={handleRegister}>
           Register
-        </button>
-        <button
-          className="submit gray"
-          onClick={() => history.goBack()}
-        >
-          Kembali Masuk
         </button>
       </div>
     </div>

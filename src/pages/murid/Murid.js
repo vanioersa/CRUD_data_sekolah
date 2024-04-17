@@ -207,14 +207,14 @@ const Murid = () => {
           <tbody>
             {currentMurids.map((murid, index) => (
               <tr key={index}>
-                <td>{indexOfFirstMurid + index + 1 + "."}</td>
-                <td>{murid.nama}</td>
-                <td>{murid.lahir}</td>
-                <td>{murid.umur}</td>
-                <td>{murid.alamat}</td>
-                <td>{murid.nik}</td>
-                <td>{murid.nisn}</td>
-                <td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>{indexOfFirstMurid + index + 1 + "."}</td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>{murid.nama}</td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>{murid.lahir}</td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>{murid.umur}</td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>{murid.alamat}</td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>{murid.nik}</td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>{murid.nisn}</td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
                   {murid.kelasId &&
                     `${
                       kelas.find((kelas) => kelas.id === murid.kelasId)?.kelas
@@ -223,10 +223,18 @@ const Murid = () => {
                         ?.jurusan
                     }`}
                 </td>
-                <td style={{ justifyContent: "center" }} className="d-flex">
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: "100%",
+                    }}
+                  >
                   <a
                     href={`/edit_murid/${murid.id}`}
-                    className="btn btn-primary text-decoration-none me-3"
+                    className="btn btn-primary text-decoration-none me-2"
                   >
                     Edit
                   </a>
@@ -236,6 +244,7 @@ const Murid = () => {
                   >
                     Hapus
                   </Button>
+                  </div>
                 </td>
               </tr>
             ))}

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import Logo from "../assets/logo1.png";
 import "./css/sidebar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -95,19 +94,12 @@ function Sidebar_Navbar() {
                 className="px-4"
               >
                 <a
-                  className="text-decoration-none d-flex align-items-center"
+                  className="text-center"
                   href="/dashboard"
                 >
-                  <img
-                    src={Logo}
-                    alt="Logo"
-                    width="70px"
-                    height="60px"
-                    className="mr-3"
-                  />
                   <p
                     className="m-0"
-                    style={{ color: "white", fontSize: "15px" }}
+                    style={{ color: "white", fontSize: "20px", fontWeight: "bold" }}
                   >
                     Data Sekolah
                   </p>
@@ -155,26 +147,20 @@ function Sidebar_Navbar() {
               width: "100%",
               position: "fixed",
               zIndex: 999,
+              padding: "15px 50px",
               top: 0,
             }}
           >
             <a
               href="/dashboard"
-              className={`text-decoration-none logo-navbar d-flex align-items-center${
+              className={`logo-navbar text-center${
                 isOpen ? " hidden" : ""
               }`}
               style={{
                 textDecoration: "none",
               }}
             >
-              <img
-                src={Logo}
-                alt="Logo"
-                width="70px"
-                height="60px"
-                className="mr-3"
-              />
-              <p className="m-0" style={{ color: "white", fontSize: "15px" }}>
+              <p className="m-0" style={{ color: "white", fontSize: "20px", fontWeight: "bold" }}>
                 Data Sekolah
               </p>
             </a>
@@ -246,7 +232,7 @@ function Sidebar_Navbar() {
 
 @media (max-width: 767px) {
   .bottom-margin {
-    margin-bottom: 25%;
+    margin-bottom: 23%;
   }
 }
 `}

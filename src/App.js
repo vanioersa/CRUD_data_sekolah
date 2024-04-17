@@ -21,6 +21,7 @@ import AddKelas from './pages/kelas/AddKelas';
 import AddMapel from './pages/mapel/AddMapel';
 import UbahMapel from './pages/mapel/Edit_Mapel'
 import Coba from './pages/coba';
+import Auth from './auth/auth';
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
           <Private path="/edit_mapel/:id" component={UbahMapel} exact/>
 
           <Route path="/coba" component={Coba} exact />
+          <Route path="/auth" component={Auth} />
         </Switch>
     </Router>
   );

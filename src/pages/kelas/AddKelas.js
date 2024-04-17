@@ -21,39 +21,89 @@ const AddKelas = () => {
     { label: "10", value: "10" },
     { label: "11", value: "11" },
     { label: "12", value: "12" },
-    { label: "Lainnya", value: "" },
+  ]);
+
+  const [jurusanOptions, setJurusanOptions] = useState([
+    { label: "TKJ", value: "TKJ" },
+    { label: "TB", value: "TB" },
+    { label: "TBSM", value: "TBSM" },
+    { label: "AKL", value: "AKL" },
+  ]);
+
+  const [tahunAjaranOptions, setTahunAjaranOptions] = useState([
+    `${currentYear} - ${currentYear + 1}`,
   ]);
 
   const [showKelasModal, setShowKelasModal] = useState(false);
+  const [showJurusanModal, setShowJurusanModal] = useState(false);
+  const [showTahunAjaranModal, setShowTahunAjaranModal] = useState(false);
   const [customKelas, setCustomKelas] = useState("");
-  const [lainnyaAdded, setLainnyaAdded] = useState(false);
+  const [customJurusan, setCustomJurusan] = useState("");
+  const [customTahunAjaran, setCustomTahunAjaran] = useState(
+    `${currentYear}-${currentYear + 1}`
+  );
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setKelas((prevKelas) => ({
-      ...prevKelas,
-      [name]: value,
-    }));
+
+    if (name === "kelas" && value === "Lainnya") {
+      setCustomKelas(true);
+    } else if (name === "jurusan" && value === "Lainnya") {
+      setCustomJurusan(true);
+    } else {
+      setKelas((prevKelas) => ({
+        ...prevKelas,
+        [name]: value,
+      }));
+    }
   };
 
   const handleKelasSubmit = () => {
+    setKelasOptions((prevOptions) => [
+      ...prevOptions,
+      { label: customKelas, value: customKelas },
+    ]);
     setKelas((prevKelas) => ({
       ...prevKelas,
       kelas: customKelas,
     }));
     setShowKelasModal(false);
-    setKelasOptions((prevOptions) => {
-      if (!lainnyaAdded) {
-        return [
-          ...prevOptions.slice(0, prevOptions.length - 1),
-          { label: customKelas, value: customKelas },
-        ];
-      }
-      return prevOptions.map((option) =>
-        option.value === "" ? { label: customKelas, value: customKelas } : option
-      );
-    });
-    setLainnyaAdded(true);
+  };
+
+  const handleJurusanSubmit = () => {
+    setJurusanOptions((prevOptions) => [
+      ...prevOptions,
+      { label: customJurusan, value: customJurusan },
+    ]);
+    setKelas((prevKelas) => ({
+      ...prevKelas,
+      jurusan: customJurusan,
+    }));
+    setShowJurusanModal(false);
+  };
+
+  const handleTahunAjaranSubmit = () => {
+    const [startYear, endYear] = customTahunAjaran.split("-").map(Number);
+    const currentYear = new Date().getFullYear();
+
+    if (startYear < currentYear - 25 || endYear > currentYear + 1) {
+      Swal.fire({
+        icon: "error",
+        title: "Batas Tahun Ajaran",
+        text: "Mohon maaf, tahun ajaran hanya dapat diatur dalam rentang 25 tahun ke belakang dan 1 tahun ke depan.",
+        timer: 3000,
+        showConfirmButton: false
+      });
+      
+      return;
+    }
+
+    setTahunAjaranOptions((prevOptions) => [...prevOptions, customTahunAjaran]);
+    setKelas((prevKelas) => ({
+      ...prevKelas,
+      tahunAjaran: customTahunAjaran,
+    }));
+    setShowTahunAjaranModal(false);
   };
 
   const handleSubmit = async (e) => {
@@ -69,7 +119,6 @@ const AddKelas = () => {
       }).then(() => {
         window.history.back();
       });
-      // Reset the state after successful submission
       setKelas({
         kelas: "",
         jurusan: "",
@@ -79,7 +128,11 @@ const AddKelas = () => {
     } catch (error) {
       console.error("Failed to add Kelas: ", error);
       let errorMessage = "Gagal menambahkan kelas. Silakan coba lagi.";
-      if (error.response && error.response.data && error.response.data.message) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
         errorMessage = error.response.data.message;
       }
       Swal.fire("Gagal", errorMessage, "error");
@@ -101,7 +154,7 @@ const AddKelas = () => {
                     value={kelas.kelas}
                     onChange={(e) => {
                       const value = e.target.value;
-                      if (value === "") {
+                      if (value === "Lainnya") {
                         setShowKelasModal(true);
                       } else {
                         handleChange(e);
@@ -116,21 +169,35 @@ const AddKelas = () => {
                         {option.label}
                       </option>
                     ))}
+                    <option value="Lainnya">Lainnya</option>
                   </Form.Select>
                 </Form.Group>
               </Col>
               <Col>
                 <Form.Group className="mb-3" controlId="jurusan">
                   <Form.Label>Jurusan</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Masukkan nama jurusan"
+                  <Form.Select
                     name="jurusan"
                     value={kelas.jurusan}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value === "Lainnya") {
+                        setShowJurusanModal(true);
+                      } else {
+                        handleChange(e);
+                      }
+                    }}
                     autoComplete="off"
                     required
-                  />
+                  >
+                    <option value="">Pilih Jurusan</option>
+                    {jurusanOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                    <option value="Lainnya">Lainnya</option>
+                  </Form.Select>
                 </Form.Group>
               </Col>
             </Row>
@@ -156,18 +223,24 @@ const AddKelas = () => {
                   <Form.Select
                     name="tahunAjaran"
                     value={kelas.tahunAjaran}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value === "Lainnya") {
+                        setShowTahunAjaranModal(true);
+                      } else {
+                        handleChange(e);
+                      }
+                    }}
                     autoComplete="off"
                     required
                   >
-                    {years.map((year) => {
-                      const nextYear = parseInt(year) + 1;
-                      return (
-                        <option key={year} value={`${year}-${nextYear}`}>
-                          {year} - {nextYear}
-                        </option>
-                      );
-                    })}
+                    <option value="">Pilih Tahun Ajaran</option>
+                    {tahunAjaranOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                    <option value="Lainnya">Lainnya</option>
                   </Form.Select>
                 </Form.Group>
               </Col>
@@ -205,6 +278,68 @@ const AddKelas = () => {
             Batal
           </Button>
           <Button variant="primary" onClick={handleKelasSubmit}>
+            Simpan
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={showJurusanModal}
+        onHide={() => setShowJurusanModal(false)}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Tambah Jurusan</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Control
+            type="text"
+            placeholder="Masukkan jurusan baru"
+            value={customJurusan}
+            onChange={(e) => setCustomJurusan(e.target.value)}
+            autoComplete="off"
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setShowJurusanModal(false)}
+            style={{ marginRight: "auto" }}
+          >
+            Batal
+          </Button>
+          <Button variant="primary" onClick={handleJurusanSubmit}>
+            Simpan
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={showTahunAjaranModal}
+        onHide={() => setShowTahunAjaranModal(false)}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Tambah Tahun Ajaran</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Control
+            type="text"
+            placeholder="Masukkan tahun ajaran baru"
+            value={customTahunAjaran}
+            onChange={(e) => setCustomTahunAjaran(e.target.value)}
+            autoComplete="off"
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setShowTahunAjaranModal(false)}
+            style={{ marginRight: "auto" }}
+          >
+            Batal
+          </Button>
+          <Button variant="primary" onClick={handleTahunAjaranSubmit}>
             Simpan
           </Button>
         </Modal.Footer>

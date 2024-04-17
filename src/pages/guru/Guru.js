@@ -214,14 +214,14 @@ const Guru = () => {
           <tbody>
             {currentGurus.map((guru, index) => (
               <tr key={guru.id}>
-                <td>{indexOfFirstGuru + index + 1 + "."}</td>
-                <td>{guru.nama}</td>
-                <td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>{indexOfFirstGuru + index + 1 + "."}</td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>{guru.nama}</td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
                   {mapels.find((mapel) => mapel.id === guru.mapelId)?.nama}
                 </td>
-                <td>{guru.telfon}</td>
-                <td>{guru.alamat}</td>
-                <td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>{guru.telfon}</td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>{guru.alamat}</td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
                   {guru.walikelasId &&
                     `${
                       kelas.find((kelas) => kelas.id === guru.walikelasId)
@@ -231,10 +231,18 @@ const Guru = () => {
                         ?.jurusan
                     }`}
                 </td>
-                <td style={{ justifyContent: "center" }} className="d-flex">
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: "100%",
+                    }}
+                  >
                   <a
                     href={`/edit_guru/${guru.id}`}
-                    className="btn btn-primary text-decoration-none me-3"
+                    className="btn btn-primary text-decoration-none me-2"
                   >
                     Edit
                   </a>
@@ -244,6 +252,7 @@ const Guru = () => {
                   >
                     Delete
                   </Button>
+                  </div>
                 </td>
               </tr>
             ))}

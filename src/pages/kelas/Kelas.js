@@ -157,24 +157,43 @@ const Kelas = () => {
           <tbody>
             {currentKelas.map((kelas, index) => (
               <tr key={kelas.id}>
-                <td>{indexOfFirstKelas + index + 1 + "."}</td>
-                <td>{kelas.kelas}</td>
-                <td>{kelas.jurusan}</td>
-                <td>{kelas.jumlah}</td>
-                <td>{kelas.tahunAjaran}</td>
-                <td style={{ justifyContent: "center" }} className="d-flex">
-                  <a
-                    href={`/edit_kelas/${kelas.id}`}
-                    className="text-decoration-none btn btn-primary me-3"
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                  {indexOfFirstKelas + index + 1 + "."}
+                </td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                  {kelas.kelas}
+                </td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                  {kelas.jurusan}
+                </td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                  {kelas.jumlah}
+                </td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                  {kelas.tahunAjaran}
+                </td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: "100%",
+                    }}
                   >
-                    Edit
-                  </a>
-                  <Button
-                    variant="danger"
-                    onClick={() => handleDeleteKelas(kelas.id)}
-                  >
-                    Delete
-                  </Button>
+                    <a
+                      href={`/edit_kelas/${kelas.id}`}
+                      className="text-decoration-none btn btn-primary me-2"
+                    >
+                      Edit
+                    </a>
+                    <Button
+                      variant="danger"
+                      onClick={() => handleDeleteKelas(kelas.id)}
+                    >
+                      Delete
+                    </Button>
+                  </div>
                 </td>
               </tr>
             ))}

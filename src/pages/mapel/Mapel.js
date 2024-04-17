@@ -143,9 +143,9 @@ const Mapel = () => {
             <tr className="text-center">
               <th>No.</th>
               <th>Nama Mapel</th>
+              <th>Tingkat</th>
               <th>Deskripsi</th>
               <th>Kurikulum</th>
-              <th>Tingkat</th>
               <th>Semester</th>
               <th>Jam</th>
               <th>Action</th>
@@ -154,26 +154,61 @@ const Mapel = () => {
           <tbody>
             {currentMapels.map((mapel, index) => (
               <tr key={mapel.id}>
-                <td>{indexOfFirstMapel + index + 1 + "."}</td>
-                <td>{mapel.nama}</td>
-                <td>{mapel.deskripsi}</td>
-                <td>{mapel.kurikulum}</td>
-                <td>{mapel.tingkat}</td>
-                <td>{mapel.semester}</td>
-                <td>{mapel.jamPelajaran}</td>
-                <td style={{ justifyContent: "center" }} className="d-flex">
-                  <a
-                    href={`/edit_mapel/${mapel.id}`}
-                    className="btn btn-primary me-3"
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                  {indexOfFirstMapel + index + 1 + "."}
+                </td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                  {mapel.nama}
+                </td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                  {mapel.tingkat}
+                </td>
+                <td
+                  style={{
+                    maxWidth: "200px",
+                    width: "30%",
+
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    textAlign: "center",
+                    verticalAlign: "middle",
+                  }}
+                >
+                  {mapel.deskripsi}
+                </td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                  {mapel.kurikulum}
+                </td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                  {mapel.semester}
+                </td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                  {mapel.jamPelajaran}
+                </td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: "100%",
+                    }}
                   >
-                    Edit
-                  </a>
-                  <Button
-                    variant="danger"
-                    onClick={() => handleDeleteMapel(mapel.id)}
-                  >
-                    Delete
-                  </Button>
+                    <a
+                      href={`/edit_mapel/${mapel.id}`}
+                      className="btn btn-primary me-2"
+                      style={{ width: "70px" }}
+                    >
+                      Edit
+                    </a>
+                    <Button
+                      variant="danger"
+                      onClick={() => handleDeleteMapel(mapel.id)}
+                      style={{ width: "70px" }}
+                    >
+                      Delete
+                    </Button>
+                  </div>
                 </td>
               </tr>
             ))}
