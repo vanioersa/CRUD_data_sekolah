@@ -137,76 +137,61 @@ const Kelas = () => {
           </Form>
         </Col>
       </Row>
-      <div
-        style={{
-          maxHeight: filteredKelas.length > 5 ? "320px" : "auto",
-          overflowY: filteredKelas.length > 5 ? "scroll" : "auto",
-        }}
-      >
-        <Table striped bordered hover responsive>
-          <thead>
-            <tr className="text-center">
-              <th>No.</th>
-              <th>Kelas</th>
-              <th>Jurusan</th>
-              <th>Jumlah Murid</th>
-              <th>Tahun Ajaran</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentKelas.map((kelas, index) => (
-              <tr key={kelas.id}>
-                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
-                  {indexOfFirstKelas + index + 1 + "."}
-                </td>
-                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
-                  {kelas.kelas}
-                </td>
-                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
-                  {kelas.jurusan}
-                </td>
-                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
-                  {kelas.jumlah}
-                </td>
-                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
-                  {kelas.tahunAjaran}
-                </td>
-                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      height: "100%",
-                    }}
+      <Table striped bordered hover responsive>
+        <thead>
+          <tr className="text-center">
+            <th>No.</th>
+            <th>Kelas</th>
+            <th>Jurusan</th>
+            <th>Jumlah Murid</th>
+            <th>Tahun Ajaran</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {currentKelas.map((kelas, index) => (
+            <tr key={kelas.id}>
+              <td style={{ verticalAlign: "middle" }}>
+                {indexOfFirstKelas + index + 1 + "."}
+              </td>
+              <td style={{ verticalAlign: "middle" }}>{kelas.kelas}</td>
+              <td style={{ verticalAlign: "middle" }}>{kelas.jurusan}</td>
+              <td style={{ verticalAlign: "middle" }}>{kelas.jumlah}</td>
+              <td style={{ verticalAlign: "middle" }}>{kelas.tahunAjaran}</td>
+              <td style={{ verticalAlign: "middle" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                  }}
+                >
+                  <a
+                    href={`/edit_kelas/${kelas.id}`}
+                    className="text-decoration-none btn btn-primary me-2"
                   >
-                    <a
-                      href={`/edit_kelas/${kelas.id}`}
-                      className="text-decoration-none btn btn-primary me-2"
-                    >
-                      Edit
-                    </a>
-                    <Button
-                      variant="danger"
-                      onClick={() => handleDeleteKelas(kelas.id)}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {currentKelas.length === 0 && (
-              <tr>
-                <td colSpan="6" className="text-center">
-                  Tidak ada data kelas yang ditemukan.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </Table>
-      </div>
+                    Edit
+                  </a>
+                  <Button
+                    variant="danger"
+                    onClick={() => handleDeleteKelas(kelas.id)}
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </td>
+            </tr>
+          ))}
+          {currentKelas.length === 0 && (
+            <tr>
+              <td colSpan="6" className="text-center">
+                Tidak ada data kelas yang ditemukan.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </Table>
       <br />
       <Row>
         <Col xs={5} md={4} lg={5}>

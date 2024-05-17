@@ -52,6 +52,11 @@
   font-size: 16px;
 }
 
+.icon {
+  width: 20px;
+  cursor: pointer;
+}
+
 .forgot-password {
   text-align: center;
   margin-top: 20px;
@@ -74,6 +79,14 @@
   justify-content: center;
   gap: 20px;
   margin-top: 30px;
+}
+
+.register-container {
+  margin-top: 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
 }
 
 .submit {

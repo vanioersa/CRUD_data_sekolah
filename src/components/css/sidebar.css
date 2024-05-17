@@ -12,6 +12,11 @@
   width: calc(100% - 250px);
 }
 
+.btn-toggle.hide {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 #sidebar {
   z-index: 1000;
   position: fixed;

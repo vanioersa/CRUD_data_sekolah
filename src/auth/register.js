@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
-import "./css/login.css";
+import "./css/Register.css";
 
 import showIcon from "../assets/show.png";
 import hideIcon from "../assets/hide.png";
@@ -16,16 +16,17 @@ const Register = () => {
   const history = useHistory();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [role] = useState("admin");
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    // Validasi jika username atau password kosong
-    if (!username && !password) {
+    // Validasi jika username, email, atau password kosong
+    if (!username && !email && !password) {
       Swal.fire({
         icon: "error",
         title: "Registrasi Gagal",
-        text: "Username dan password harus diisi",
+        text: "Username, email, dan password harus diisi",
         timer: 2000,
         showConfirmButton: false,
       });
@@ -36,6 +37,26 @@ const Register = () => {
         icon: "error",
         title: "Registrasi Gagal",
         text: "Username harus diisi",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      return;
+    }
+    if (!email) {
+      Swal.fire({
+        icon: "error",
+        title: "Registrasi Gagal",
+        text: "Email harus diisi",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      return;
+    }
+    if (!validateEmail(email)) {
+      Swal.fire({
+        icon: "error",
+        title: "Registrasi Gagal",
+        text: "Email tidak valid",
         timer: 2000,
         showConfirmButton: false,
       });
@@ -91,14 +112,15 @@ const Register = () => {
     try {
       const response = await axios.post(`${apiUrl}/register`, {
         username,
+        email,
         password,
         role,
       });
       if (response && response.data) {
         Swal.fire({
           icon: "success",
-          title: "Registrasi Berhasil!",
-          text: "Anda telah berhasil registrasi.",
+          title: "Daftar Berhasil!",
+          text: "Anda telah berhasil Mendaftar.",
           timer: 2000,
           showConfirmButton: false,
         }).then(() => {
@@ -120,34 +142,14 @@ const Register = () => {
     }
   };
 
+  const validateEmail = (email) => {
+    // Regex untuk validasi email sederhana
+    const re = /\S+@\S+\.\S+/;
+    return re.test(email);
+  };
+
   return (
-    <div
-      style={{
-        marginTop: "50px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-      className="container"
-    >
-      <div className="submit-container">
-        <button
-          className="submit gray"
-          onClick={() => {
-            history.goBack();
-          }}
-        >
-          Masuk
-        </button>
-        <button
-          className="submit gray"
-          onClick={() => {
-            window.location.reload();
-          }}
-        >
-          Daftar
-        </button>
-      </div>
+    <div className="register-container">
       <div className="header">
         <div className="text">Daftar</div>
         <div className="underline"></div>
@@ -173,7 +175,7 @@ const Register = () => {
           />
           <img
             alt="Toggle visibility"
-            src={showPassword ? hideIcon : showIcon}
+            src={showPassword ? showIcon : hideIcon}
             onClick={() => setShowPassword(!showPassword)}
             style={{
               cursor: "pointer",
@@ -183,13 +185,32 @@ const Register = () => {
             }}
           />
         </div>
+
+        <div className="input">
+          <img src={userIcon} alt="Email Icon" className="icon" />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
       </div>
 
-      <div className="submit-container">
-        <button className="submit gray" onClick={handleRegister}>
-          Register
-        </button>
-      </div>
+      <p className="fs-6 m-4">
+        Jika sudah punya akun{" "}
+        <a
+          href="/login"
+          style={{ textDecoration: "none" }}
+          className="fs-6 fst-italic"
+        >
+          Klik disini
+        </a>
+      </p>
+
+      <button className="submit gray" onClick={handleRegister}>
+        Daftar
+      </button>
     </div>
   );
 };

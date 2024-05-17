@@ -9,37 +9,42 @@ import {
   faDoorOpen,
   faBook,
   faSignOutAlt,
+  faSchool,
 } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
+import { Button } from "react-bootstrap";
 
 function Sidebar_Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
   const location = useLocation();
 
   const toggleSidebar = () => setIsOpen(!isOpen);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-    }
+    setIsLoggedIn(!!token);
 
-    const closeOnOutsideClick = (e) => {
-      if (
-        isOpen &&
-        !e.target.closest("#sidebar") &&
-        !e.target.closest(".btn-toggle")
-      ) {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 10);
+    };
+
+    const handleClickOutside = (event) => {
+      const sidebar = document.getElementById("sidebar");
+      if (sidebar && !sidebar.contains(event.target)) {
         setIsOpen(false);
       }
     };
 
-    window.addEventListener("click", closeOnOutsideClick);
-    return () => window.removeEventListener("click", closeOnOutsideClick);
-  }, [isOpen]);
+    window.addEventListener("scroll", handleScroll);
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const isActive = (pathname) => location.pathname === pathname;
 
@@ -66,7 +71,7 @@ function Sidebar_Navbar() {
         localStorage.removeItem("token");
         Swal.fire({
           title: "Berhasil!",
-          text: "Anda telah berhasil logout.",
+          text: "Anda telah berhasil keluar.",
           icon: "success",
           timer: 2000,
           showConfirmButton: false,
@@ -83,6 +88,13 @@ function Sidebar_Navbar() {
     });
   };
 
+  const handleBackToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <>
       <div style={{ backgroundColor: isOpen ? "#495E57" : "" }}>
@@ -93,17 +105,26 @@ function Sidebar_Navbar() {
                 style={{ paddingTop: "8px", paddingBottom: "8px" }}
                 className="px-4"
               >
-                <a
+                <button
                   className="text-center"
-                  href="/dashboard"
+                  onClick={() => {
+                    window.location.reload();
+                  }}
+                  style={{
+                    color: "white",
+                    fontSize: "20px",
+                    fontWeight: "bold",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                  }}
                 >
-                  <p
-                    className="m-0"
-                    style={{ color: "white", fontSize: "20px", fontWeight: "bold" }}
-                  >
-                    Data Sekolah
-                  </p>
-                </a>
+                  <FontAwesomeIcon
+                    icon={faSchool}
+                    style={{ marginRight: "10px", fontSize: "25px" }}
+                  />
+                  Data Sekolah
+                </button>
               </header>
               <ul
                 className={`nav flex-column ${isOpen ? "activest" : "active"}`}
@@ -124,7 +145,7 @@ function Sidebar_Navbar() {
                   ))}
 
                   <li className="nav-item">
-                    <Link className="nav-link" onClick={handleLogout}>
+                    <Link className="nav-link" onClick={handleLogout} to="#">
                       <FontAwesomeIcon icon={faSignOutAlt} />
                       <span
                         style={{ marginLeft: "15px" }}
@@ -151,19 +172,26 @@ function Sidebar_Navbar() {
               top: 0,
             }}
           >
-            <a
-              href="/dashboard"
-              className={`logo-navbar text-center${
-                isOpen ? " hidden" : ""
-              }`}
+            <button
+              className="text-center"
+              onClick={() => {
+                window.location.reload();
+              }}
               style={{
-                textDecoration: "none",
+                color: "white",
+                fontSize: "20px",
+                fontWeight: "bold",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
               }}
             >
-              <p className="m-0" style={{ color: "white", fontSize: "20px", fontWeight: "bold" }}>
-                Data Sekolah
-              </p>
-            </a>
+              <FontAwesomeIcon
+                icon={faSchool}
+                style={{ marginRight: "10px", fontSize: "25px" }}
+              />
+              Data Sekolah
+            </button>
 
             <div className="navbar-links">
               {isLoggedIn && !isOpen && (
@@ -202,7 +230,7 @@ function Sidebar_Navbar() {
             </div>
             {isLoggedIn ? (
               <button
-                className="btn-toggle"
+                className={`btn-toggle ${isOpen ? "hide" : ""}`}
                 onClick={toggleSidebar}
                 aria-expanded={isOpen}
                 aria-label="Toggle sidebar"
@@ -211,7 +239,7 @@ function Sidebar_Navbar() {
               </button>
             ) : (
               <button
-                className="btn-toggle"
+                className={`btn-toggle ${isOpen ? "hide" : ""}`}
                 onClick={toggleSidebar}
                 aria-expanded={isOpen}
                 aria-label="Toggle sidebar"
@@ -222,20 +250,54 @@ function Sidebar_Navbar() {
           </nav>
         </div>
       </div>
+      {showBackToTop && (
+        <button
+          className="btn-back-to-top"
+          onClick={handleBackToTop}
+          aria-label="Back to Top"
+          style={{ zIndex: 9999 }}
+        >
+          ↑
+        </button>
+      )}
+
       <div className="bottom-margin" />
 
       <style>
         {`
       .bottom-margin {
-  margin-bottom: 7%;
-}
+        margin-bottom: 7%;
+      }
 
-@media (max-width: 767px) {
-  .bottom-margin {
-    margin-bottom: 23%;
-  }
-}
-`}
+      @media (max-width: 767px) {
+        .bottom-margin {
+          margin-bottom: 23%;
+        }
+      }
+
+      .btn-back-to-top {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #078bf0;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition: opacity 0.3s;
+      }
+
+      .btn-back-to-top:hover {
+        opacity: 0.8;
+      }
+      `}
       </style>
     </>
   );

@@ -207,13 +207,27 @@ const Murid = () => {
           <tbody>
             {currentMurids.map((murid, index) => (
               <tr key={index}>
-                <td style={{ textAlign: "center", verticalAlign: "middle" }}>{indexOfFirstMurid + index + 1 + "."}</td>
-                <td style={{ textAlign: "center", verticalAlign: "middle" }}>{murid.nama}</td>
-                <td style={{ textAlign: "center", verticalAlign: "middle" }}>{murid.lahir}</td>
-                <td style={{ textAlign: "center", verticalAlign: "middle" }}>{murid.umur}</td>
-                <td style={{ textAlign: "center", verticalAlign: "middle" }}>{murid.alamat}</td>
-                <td style={{ textAlign: "center", verticalAlign: "middle" }}>{murid.nik}</td>
-                <td style={{ textAlign: "center", verticalAlign: "middle" }}>{murid.nisn}</td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                  {indexOfFirstMurid + index + 1 + "."}
+                </td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                  {murid.nama}
+                </td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                  {murid.lahir}
+                </td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                  {murid.umur}
+                </td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                  {murid.alamat}
+                </td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                  {murid.nik}
+                </td>
+                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                  {murid.nisn}
+                </td>
                 <td style={{ textAlign: "center", verticalAlign: "middle" }}>
                   {murid.kelasId &&
                     `${
@@ -232,18 +246,18 @@ const Murid = () => {
                       height: "100%",
                     }}
                   >
-                  <a
-                    href={`/edit_murid/${murid.id}`}
-                    className="btn btn-primary text-decoration-none me-2"
-                  >
-                    Edit
-                  </a>
-                  <Button
-                    variant="danger"
-                    onClick={() => handleDeleteMurid(murid.id)}
-                  >
-                    Hapus
-                  </Button>
+                    <a
+                      href={`/edit_murid/${murid.id}`}
+                      className="btn btn-primary text-decoration-none me-2"
+                    >
+                      Edit
+                    </a>
+                    <Button
+                      variant="danger"
+                      onClick={() => handleDeleteMurid(murid.id)}
+                    >
+                      Hapus
+                    </Button>
                   </div>
                 </td>
               </tr>

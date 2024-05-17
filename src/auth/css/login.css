@@ -81,6 +81,14 @@
   margin-top: 30px;
 }
 
+.login-container {
+  margin-top: 13%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+
 .submit {
   display: flex;
   justify-content: center;

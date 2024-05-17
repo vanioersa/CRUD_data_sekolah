@@ -17,6 +17,7 @@ const Mapel = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [mapelsPerPage, setMapelsPerPage] = useState(10);
+  const [showFullDescription, setShowFullDescription] = useState({});
 
   useEffect(() => {
     const fetchMapels = async () => {
@@ -47,6 +48,7 @@ const Mapel = () => {
           await deleteMapel(id);
           const updatedMapels = mapels.filter((mapel) => mapel.id !== id);
           setMapels(updatedMapels);
+          setShowFullDescription({ ...showFullDescription, [id]: false });
           Swal.fire({
             title: "Berhasil",
             text: "Mapel berhasil dihapus",
@@ -78,6 +80,13 @@ const Mapel = () => {
   const handleSelectChange = (event) => {
     setMapelsPerPage(parseInt(event.target.value, 10));
     setCurrentPage(1);
+  };
+
+  const toggleDescription = (id) => {
+    setShowFullDescription({
+      ...showFullDescription,
+      [id]: !showFullDescription[id],
+    });
   };
 
   const indexOfLastMapel = currentPage * mapelsPerPage;
@@ -132,96 +141,103 @@ const Mapel = () => {
           </Form>
         </Col>
       </Row>
-      <div
-        style={{
-          maxHeight: filteredMapels.length > 5 ? "320px" : "auto",
-          overflowY: filteredMapels.length > 5 ? "scroll" : "auto",
-        }}
-      >
-        <Table striped bordered hover responsive>
-          <thead>
-            <tr className="text-center">
-              <th>No.</th>
-              <th>Nama Mapel</th>
-              <th>Tingkat</th>
-              <th>Deskripsi</th>
-              <th>Kurikulum</th>
-              <th>Semester</th>
-              <th>Jam</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentMapels.map((mapel, index) => (
-              <tr key={mapel.id}>
-                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
-                  {indexOfFirstMapel + index + 1 + "."}
-                </td>
-                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
-                  {mapel.nama}
-                </td>
-                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
-                  {mapel.tingkat}
-                </td>
-                <td
+      <Table striped bordered hover responsive>
+        <thead>
+          <tr className="text-center">
+            <th>No.</th>
+            <th>Nama Mapel</th>
+            <th>Tingkat</th>
+            <th>Deskripsi</th>
+            <th>Kurikulum</th>
+            <th>Semester</th>
+            <th>Jam</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {currentMapels.map((mapel, index) => (
+            <tr key={mapel.id}>
+              <td style={{ verticalAlign: "middle" }}>
+                {indexOfFirstMapel + index + 1 + "."}
+              </td>
+              <td style={{ verticalAlign: "middle" }}>{mapel.nama}</td>
+              <td style={{ verticalAlign: "middle" }}>{mapel.tingkat}</td>
+              <td
+                style={{
+                  maxWidth: "200px",
+                  overflow: "hidden",
+                  verticalAlign: "middle",
+                }}
+              >
+                {showFullDescription[mapel.id] ||
+                mapel.deskripsi.length <= 20 ? (
+                  mapel.deskripsi
+                ) : (
+                  <>
+                    {mapel.deskripsi.slice(0, 25)}{" "}
+                    <span
+                      style={{
+                        color: "blue",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => toggleDescription(mapel.id)}
+                    >
+                      ...Detail
+                    </span>
+                  </>
+                )}
+                {showFullDescription[mapel.id] && (
+                  <span
+                    style={{
+                      color: "blue",
+                      cursor: "pointer",
+                      marginLeft: "5px",
+                    }}
+                    onClick={() => toggleDescription(mapel.id)}
+                  >
+                    Ringkas
+                  </span>
+                )}
+              </td>
+              <td style={{ verticalAlign: "middle" }}>{mapel.kurikulum}</td>
+              <td style={{ verticalAlign: "middle" }}>{mapel.semester}</td>
+              <td style={{ verticalAlign: "middle" }}>{mapel.jamPelajaran}</td>
+              <td style={{ verticalAlign: "middle" }}>
+                <div
                   style={{
-                    maxWidth: "200px",
-                    width: "30%",
-
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    textAlign: "center",
-                    verticalAlign: "middle",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
                   }}
                 >
-                  {mapel.deskripsi}
-                </td>
-                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
-                  {mapel.kurikulum}
-                </td>
-                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
-                  {mapel.semester}
-                </td>
-                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
-                  {mapel.jamPelajaran}
-                </td>
-                <td style={{ textAlign: "center", verticalAlign: "middle" }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      height: "100%",
-                    }}
+                  <a
+                    href={`/edit_mapel/${mapel.id}`}
+                    className="btn btn-primary me-2"
+                    style={{ width: "70px" }}
                   >
-                    <a
-                      href={`/edit_mapel/${mapel.id}`}
-                      className="btn btn-primary me-2"
-                      style={{ width: "70px" }}
-                    >
-                      Edit
-                    </a>
-                    <Button
-                      variant="danger"
-                      onClick={() => handleDeleteMapel(mapel.id)}
-                      style={{ width: "70px" }}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {currentMapels.length === 0 && (
-              <tr>
-                <td colSpan="8" className="text-center">
-                  Tidak ada data mapel yang ditemukan.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </Table>
-      </div>
+                    Edit
+                  </a>
+                  <Button
+                    variant="danger"
+                    onClick={() => handleDeleteMapel(mapel.id)}
+                    style={{ width: "70px" }}
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </td>
+            </tr>
+          ))}
+          {currentMapels.length === 0 && (
+            <tr>
+              <td colSpan="8" className="text-center">
+                Tidak ada data mapel yang ditemukan.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </Table>
       <br />
       <Row>
         <Col xs={5} md={4} lg={5}>
